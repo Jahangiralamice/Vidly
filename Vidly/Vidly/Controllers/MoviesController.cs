@@ -25,7 +25,7 @@ namespace Vidly.Controllers
         // GET: Movies
         public ViewResult Index()
         {
-            var movies = _context.Movies.Include(r=>r.Genre).ToList();
+            var movies = _context.Movies.Include(r => r.Genre).ToList();
             return View(movies);
         }
 
@@ -41,8 +41,19 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Movie movie)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieViewModel
+                {
+                    Movie = movie,
+                    Genres = _context.Genres.ToList()
+                };
+                return View(viewModel);
+            }
+
             if (movie.Id == 0)
             {
                 movie.DateAdded = DateTime.Now;
@@ -70,8 +81,18 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Edit(Movie movie)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieViewModel
+                {
+                    Movie = movie,
+                    Genres = _context.Genres.ToList()
+                };
+                return View(viewModel);
+            }
             var movieInDb = _context.Movies.Single(r => r.Id == movie.Id);
 
             movieInDb.Name = movie.Name;
@@ -86,7 +107,7 @@ namespace Vidly.Controllers
 
         public ActionResult Details(int id)
         {
-            var movie = _context.Movies.Include(r => r.Genre).SingleOrDefault(r=>r.Id == id);
+            var movie = _context.Movies.Include(r => r.Genre).SingleOrDefault(r => r.Id == id);
             if (movie == null)
             {
                 return HttpNotFound();
@@ -95,7 +116,7 @@ namespace Vidly.Controllers
             return View(movie);
         }
 
-        
+
 
         public ActionResult Random()
         {
