@@ -25,8 +25,7 @@ namespace Vidly.Controllers
         // GET: Movies
         public ViewResult Index()
         {
-            var movies = _context.Movies.Include(r => r.Genre).ToList();
-            return View(movies);
+            return View();
         }
 
         [HttpGet]
